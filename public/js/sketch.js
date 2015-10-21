@@ -3,8 +3,10 @@ console.log("this is loading! yay! happy halloween!");
 var theta = 0;
 
 var socket = io();
-var windowWidth = window.innerWidth;
-var windowHeight = window.innerHeight;
+// var canvasWidth = window.innerWidth;
+// var canvasHeight = window.innerHeight;
+var canvasWidth = 1000;
+var canvasHeight = 700;
 var animating = false;
 
 // the corns to animate
@@ -46,11 +48,12 @@ socket.on('someone draws', function (data) {
 // the corn object //
 /////////////////////
 
-function Corn(x, y, key) {
+function Corn(x, y, w, h) {
     // this.v = createVector(x, y);
     this.x = x;
     this.y = y;
-    this.key = key;
+    this.w = w;
+    this.h = h;
 
     this.frames = 0;
     this.animating = false;
@@ -60,8 +63,8 @@ Corn.prototype.display = function() {
     // fill(102);
     if (this.animating) {
         this.frames+=4;
-        rect(this.x, this.y + this.frames, 100, 100); // hardset on width and height
-        if (this.frames >= windowHeight) {
+        rect(this.x, this.y + this.frames, this.w, this.h); // hardset on width and height
+        if (this.frames >= canvasHeight) {
             this.frames = 0;
             this.animating = false;
         }
@@ -83,43 +86,79 @@ Corn.prototype.isAnimating = function() {
 
 var corns = [];
 
+function keyPressed() {
+    
+    // for the ghost keys
+    if (keyCode === LEFT_ARROW) {
+        console.log("pressed left");
+        drawRect();
+    } else if (keyCode === RIGHT_ARROW) {
+        console.log("pressed up");
+        drawRect();
+    } else if (keyCode === UP_ARROW) {
+        console.log("pressed up");
+    } else if (keyCode === DOWN_ARROW) {
+        console.log("pressed down");
+        var newCorn = new Corn(random(0, 1000), 0, 100);
+        newCorn.drop();
+        corns.push(newCorn);
+    } else {
+        console.log("pressed other");
+    }
+
+    // wow do it for her
+    // for the corn keys
+    var newCorn;
+
+    if (key.toLowerCase() == 'q') {
+        console.log('Q');
+        newCorn = new Corn(5, 0, 90, 90);
+    } else if (key.toLowerCase() == 'w') {
+        console.log('W');
+        newCorn = new Corn(105, 0, 90, 90);
+    } else if (key.toLowerCase() == 'e') {
+        console.log('E');
+        newCorn = new Corn(205, 0, 90, 90);
+    } else if (key.toLowerCase() == 'r') {
+        console.log('R');
+        newCorn = new Corn(305, 0, 90, 90);
+    } else if (key.toLowerCase() == 't') {
+        console.log('T');
+        newCorn = new Corn(405, 0, 90, 90);
+    } else if (key.toLowerCase() == 'y') {
+        console.log('Y');
+        newCorn = new Corn(505, 0, 90, 90);
+    } else if (key.toLowerCase() == 'u') {
+        console.log('U');
+        newCorn = new Corn(605, 0, 90, 90);
+    } else if (key.toLowerCase() == 'i') {
+        console.log('I');
+        newCorn = new Corn(705, 0, 90, 90);
+    } else if (key.toLowerCase() == 'o') {
+        console.log('O');
+        newCorn = new Corn(805, 0, 90, 90);
+    } else if (key.toLowerCase() == 'p') {
+        console.log('P');
+        newCorn = new Corn(905, 0, 90, 90);
+    } else {
+        console.log('pressed other');
+    }
+
+    if (corns.length < 10) {
+        newCorn.drop();
+        corns.push(newCorn);    
+    }
+
+}
+
 function setup() {
-    var canvas = createCanvas(windowWidth, windowHeight);
+    console.log(canvasWidth, canvasHeight);
+    var canvas = createCanvas(canvasWidth, canvasHeight);
     canvas.parent("p5Canvas");
 
     background(255);
     noStroke();
     fill(102);
-
-    // for (var i = 0; i < 5; i++) {
-    //     corns.push(new Corn(120*i, 0, 100, 100));
-    // };
-}
-
-function keyPressed() {
-    if (keyCode === LEFT_ARROW) {
-        console.log("pressed left");
-        drawRect();
-        // socket.emit('chat message', "left");
-    } else if (keyCode === RIGHT_ARROW) {
-        console.log("pressed up");
-        drawRect();
-        // socket.emit('chat message', "right");
-    } else if (keyCode === UP_ARROW) {
-        console.log("pressed up");
-        // socket.emit('chat message', "up");
-    } else if (keyCode === DOWN_ARROW) {
-        console.log("pressed down");
-        
-        var newCorn = new Corn(random(0, 500), 0, 100);
-        newCorn.drop();
-        corns.push(newCorn);
-        // cornu.drop();
-        // socket.emit('chat message', "down");
-    } else {
-        console.log("pressed other");
-        // socket.emit('chat message', "other");
-    }
 }
 
 function draw() {
@@ -129,9 +168,14 @@ function draw() {
         if (!corns[i].isAnimating()) {
             console.log("corn length: ", corns.length);
             corns.splice(0, i);
+            // if reduced to 1 after splice -- restart the corns
+            if (corns.length == 1) {
+                corns = [];
+            }
         } else {
             corns[i].display();
         }
     };
+
     // theta++;
 }
