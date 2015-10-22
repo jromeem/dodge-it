@@ -25,9 +25,14 @@ app.get('/', function(request, response) {
 io.on('connection', function(socket){
     console.log('a user connected');
     // recieving socket
-    socket.on('chat message', function(msg){
-        io.emit('someone draws', msg);
-        console.log("someone draws", msg);
+    socket.on('victor moves', function(msg){
+        io.emit('victor moves', msg);
+        console.log("victor", msg);
+    });
+
+    socket.on('nathan moves', function(msg){
+        io.emit('nathan moves', msg);
+        console.log("nathan", msg);
     });
 });
 

@@ -9,9 +9,18 @@ var animating = false;
 // register socket calls //
 ///////////////////////////
 
-socket.on('someone draws', function (data) {
-    console.log("did you get here?");
-    rect(data.x, data.y, data.width, data.height);
+socket.on('victor moves', function (data) {
+
+    victor = new Sprite(data.x, data.y, data.w, data.y, data.direction);
+    console.log("victor did you get here?", data);
+    // rect(data.x, data.y, data.width, data.height);
+});
+
+socket.on('nathan moves', function (data) {
+    // nathan = data;
+    nathan = new Sprite(data.x, data.y, data.w, data.y, data.direction);
+    console.log("nathan did you get here?", data);
+    // rect(data.x, data.y, data.width, data.height);
 });
 
 ///////////////////////
@@ -19,12 +28,12 @@ socket.on('someone draws', function (data) {
 ///////////////////////
 
 // sprite class
-function Sprite(x, y, w, h) {
+function Sprite(x, y, w, h, d) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
-    this.direction = -1; // -1 left, 1 right
+    this.direction = d == undefined ? -1 : d; // -1 left, 1 right
 }
 
 // draw sprite here
@@ -55,47 +64,53 @@ var chickimg;
 function keyPressed() {
     // victor the ghost
     if (player == 1) {
-        if (keyCode == UP_ARROW || key.toLowerCase == 'w') {
+        if (keyCode == UP_ARROW || key.toLowerCase() == 'w') {
             victor.y -= 20;
             if (victor.y < -10) {
                 victor.y = canvasHeight;
             }
-        } else if (keyCode == DOWN_ARROW || key.toLowerCase == 's') {
+        } else if (keyCode == DOWN_ARROW || key.toLowerCase() == 's') {
             victor.y += 20;
             victor.y %= canvasHeight;
-        } else if (keyCode == LEFT_ARROW || key.toLowerCase == 'a') {
+        } else if (keyCode == LEFT_ARROW || key.toLowerCase() == 'a') {
             victor.x -= 20;
             if (victor.x < -10) {
                 victor.x = canvasWidth;
             }
             victor.direction = 1;
-        } else if (keyCode == RIGHT_ARROW || key.toLowerCase == 'd') {
+        } else if (keyCode == RIGHT_ARROW || key.toLowerCase() == 'd') {
             victor.x += 20;
             victor.x %= canvasWidth;
             victor.direction = -1;
         }
 
+        // emit victor
+        socket.emit("victor moves", victor);
+
     // nathan the chick
     } else {
-        if (keyCode == UP_ARROW || key.toLowerCase == 'w') {
+        if (keyCode == UP_ARROW || key.toLowerCase() == 'w') {
             nathan.y -= 20;
             if (nathan.y < -10) {
                 nathan.y = canvasHeight;
             }
-        } else if (keyCode == DOWN_ARROW || key.toLowerCase == 's') {
+        } else if (keyCode == DOWN_ARROW || key.toLowerCase() == 's') {
             nathan.y += 20;
             nathan.y %= canvasHeight;
-        } else if (keyCode == LEFT_ARROW || key.toLowerCase == 'a') {
+        } else if (keyCode == LEFT_ARROW || key.toLowerCase() == 'a') {
             nathan.x -= 20;
             if (nathan.x < -10) {
                 nathan.x = canvasWidth;
             }
             nathan.direction = 1;
-        } else if (keyCode == RIGHT_ARROW || key.toLowerCase == 'd') {
+        } else if (keyCode == RIGHT_ARROW || key.toLowerCase() == 'd') {
             nathan.x += 20;
             nathan.x %= canvasWidth;
             nathan.direction = -1;
         }
+
+        // emit nathan
+        socket.emit("nathan moves", nathan);
     }
 }
 
@@ -121,6 +136,4 @@ function draw() {
     victor.display();
     fill(0,0,255);
     nathan.display();
-
-    // image(ghostimg, 25, 25, 50, 50);
 }
