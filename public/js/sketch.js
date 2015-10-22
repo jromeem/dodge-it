@@ -5,8 +5,6 @@ var canvasWidth = 1000;
 var canvasHeight = 700;
 var animating = false;
 
-
-
 ///////////////////////////
 // register socket calls //
 ///////////////////////////
@@ -26,11 +24,20 @@ function Sprite(x, y, w, h) {
     this.y = y;
     this.w = w;
     this.h = h;
+    this.direction = -1; // -1 left, 1 right
 }
 
 // draw sprite here
 Sprite.prototype.display = function() {
-    rect(this.x, this.y, this.w, this.h);
+    // rect(this.x, this.y, this.w, this.h);
+
+    // translate(this.x, this.y);
+    push();
+    translate(this.x, this.y);
+    scale(0.025*this.direction, 0.025);
+    image(ghostimg, this.w-1000, this.h);
+    pop();
+    // image(ghostimg, this.x, this.y, this.w, this.h);
 };
 
 //////////////////////
@@ -38,64 +45,69 @@ Sprite.prototype.display = function() {
 //////////////////////
 
 var player;
+
+// the two sprite players
 var victor = new Sprite(100, 100, 40, 40);
 var nathan = new Sprite(800, 500, 40, 40);
+var ghostimg;
+var chickimg;
 
 function keyPressed() {
-    if (keyCode == UP_ARROW || key.toLowerCase() == 'w') {
-        console.log('up');
-        if (player == 1) {
+    // victor the ghost
+    if (player == 1) {
+        if (keyCode == UP_ARROW || key.toLowerCase == 'w') {
             victor.y -= 20;
             if (victor.y < -10) {
                 victor.y = canvasHeight;
             }
-        } else {
-            nathan.y -= 20;
-            if (nathan.y < -10) {
-                nathan.y = canvasHeight;
-            }
-        }
-    } else if (keyCode == DOWN_ARROW || key.toLowerCase() == 's') {
-        console.log('down');
-        if (player == 1) {
+        } else if (keyCode == DOWN_ARROW || key.toLowerCase == 's') {
             victor.y += 20;
             victor.y %= canvasHeight;
-        } else {
-            nathan.y += 20;
-            nathan.y %= canvasHeight;
-        }
-    } else if (keyCode == LEFT_ARROW || key.toLowerCase() == 'a') {
-        console.log('left');
-        if (player == 1) {
+        } else if (keyCode == LEFT_ARROW || key.toLowerCase == 'a') {
             victor.x -= 20;
             if (victor.x < -10) {
                 victor.x = canvasWidth;
             }
-        } else {
+            victor.direction = 1;
+        } else if (keyCode == RIGHT_ARROW || key.toLowerCase == 'd') {
+            victor.x += 20;
+            victor.x %= canvasWidth;
+            victor.direction = -1;
+        }
+
+    // nathan the chick
+    } else {
+        if (keyCode == UP_ARROW || key.toLowerCase == 'w') {
+            nathan.y -= 20;
+            if (nathan.y < -10) {
+                nathan.y = canvasHeight;
+            }
+        } else if (keyCode == DOWN_ARROW || key.toLowerCase == 's') {
+            nathan.y += 20;
+            nathan.y %= canvasHeight;
+        } else if (keyCode == LEFT_ARROW || key.toLowerCase == 'a') {
             nathan.x -= 20;
             if (nathan.x < -10) {
                 nathan.x = canvasWidth;
             }
-        }
-    } else if (keyCode == RIGHT_ARROW || key.toLowerCase() == 'd') {
-        console.log('right');
-        if (player == 1) {
-            victor.x += 20;
-            victor.x %= canvasWidth;
-        } else {
+            nathan.direction = 1;
+        } else if (keyCode == RIGHT_ARROW || key.toLowerCase == 'd') {
             nathan.x += 20;
             nathan.x %= canvasWidth;
+            nathan.direction = -1;
         }
-    } else {
-        console.log('hmm');
     }
+}
+
+
+function preload() {
+    ghostimg = loadImage('../images/ghost.png');
 }
 
 function setup() {
     var canvas = createCanvas(canvasWidth, canvasHeight);
     canvas.parent("p5Canvas");
 
-    background(255);
     noStroke();
     fill(102);
 
@@ -104,9 +116,11 @@ function setup() {
 }
 
 function draw() {
-    background(255);
+    background(220);
     fill(255,0,0);
     victor.display();
     fill(0,0,255);
     nathan.display();
+
+    // image(ghostimg, 25, 25, 50, 50);
 }
