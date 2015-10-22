@@ -9,14 +9,13 @@ var animating = false;
 // register socket calls //
 ///////////////////////////
 
-socket.on('victor moves', function (data) {
-
+socket.on('victor moved', function (data) {
     victor = new Sprite(data.x, data.y, data.w, data.y, data.direction);
     console.log("victor did you get here?", data);
     // rect(data.x, data.y, data.width, data.height);
 });
 
-socket.on('nathan moves', function (data) {
+socket.on('nathan moved', function (data) {
     // nathan = data;
     nathan = new Sprite(data.x, data.y, data.w, data.y, data.direction);
     console.log("nathan did you get here?", data);

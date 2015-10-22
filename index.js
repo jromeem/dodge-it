@@ -26,12 +26,12 @@ io.on('connection', function(socket){
     console.log('a user connected');
     // recieving socket
     socket.on('victor moves', function(msg){
-        io.emit('victor moves', msg);
+        io.emit('victor moved', msg);
         console.log("victor", msg);
     });
 
     socket.on('nathan moves', function(msg){
-        io.emit('nathan moves', msg);
+        io.emit('nathan moved', msg);
         console.log("nathan", msg);
     });
 });
